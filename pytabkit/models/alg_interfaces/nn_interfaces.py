@@ -110,7 +110,7 @@ class NNAlgInterface(AlgInterface):
             print("INFO: PytabkitModel is using warm_start -> continuing training from existing model")
             assert self.model, "self.model cannot be None when using warm start!"            
             # Reset epoch counter, validation history, etc.
-            self.model.reset_training_progress()  
+            self.model.reset_training_progress(n_epochs)
             # Update dataloaders with new data
             self.model.update_dataloaders_and_split_indices(ds, idxs_list, interface_resources)
         else:
@@ -156,6 +156,10 @@ class NNAlgInterface(AlgInterface):
         trainer.fit(
             model=self.model, train_dataloaders=self.model.train_dl, val_dataloaders=self.model.val_dl
         )
+
+        if self.warm_start:
+            logger.log(0, f'Warm-start training completed {self.model.progress.epoch} epoch(s) '
+                          f'(requested {n_epochs})')
 
         if hasattr(self.model, 'fit_params'):
             self.fit_params = self.model.fit_params

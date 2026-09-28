@@ -78,14 +78,14 @@ class TabNNModule(pl.LightningModule):
 
         self.config = config
 
-    def reset_training_progress(self):
+    def reset_training_progress(self, n_epochs: int):
         """
         Reset training progress trackers while preserving model weights.
         Used for warm_start/continued training in federated learning.
         """
         # Reset epoch counter
         self.progress = LearnerProgress()
-        self.progress.max_epochs = self.config.get('n_epochs', 256)
+        self.progress.max_epochs = n_epochs
 
         # Reset validation tracking
         self.val_preds = []

@@ -306,8 +306,11 @@ class AlgInterfaceEstimator(BaseEstimator):
         warm_start = self.get_params().get('warm_start', False)
 
         if warm_start:
-            # Reuse existing interface (will be set externally)
+            # Reuse the fitted interface while applying runtime-only training settings.
             assert self.cv_alg_interface_, "cv_alg_interface_ can not be None if warm_start is specified!"
+            self.cv_alg_interface_.config['n_epochs'] = params['n_epochs']
+            if hasattr(self.cv_alg_interface_, 'warm_start'):
+                self.cv_alg_interface_.warm_start = True
         else:
             # Create new interface (original behavior)
             self.cv_alg_interface_ = self._create_alg_interface(n_cv=n_cv)
